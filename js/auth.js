@@ -1,4 +1,4 @@
-const AUTH_AUTH_SESSION_KEY="srakah_session_token";
+const AUTH_SESSION_KEY="srakah_session_token";
 function isLogged(){return !!sessionStorage.getItem(AUTH_SESSION_KEY)}
 function togglePassword(){const x=document.getElementById("password");x.type=x.type==="password"?"text":"password"}
 if(location.pathname.endsWith("login.html")&&isLogged())location.href="index.html";
