@@ -2,11 +2,9 @@ const typeEl=type,buildingEl=building,categoryEl=category;date.value=new Date().
 async function init(){await loadData();fillBuildings("#building");const q=new URLSearchParams(location.search);if(q.get("building"))buildingEl.value=q.get("building");refresh();renderRecent()}
 function refresh(){categoryEl.innerHTML=cats(typeEl.value).map(x=>`<option>${x}</option>`).join("");refreshMeters()}
 function refreshMeters(){
-  const b=get(DB.buildings).find(x=>x.id===buildingEl.value),show=typeEl.value==="expense"&&["كهرباء","مياه"].includes(categoryEl.value);
+  const b=get(DB.buildings).find(x=>x.id===buildingEl.value),isMeterExpense=typeEl.value==="expense"&&["كهرباء","مياه"].includes(categoryEl.value),meterType=categoryEl.value,filtered=(b?.meters||[]).filter(m=>m.type===meterType),show=isMeterExpense&&filtered.length>0;
   meterArea.classList.toggle("hidden",!show);amountWrap.classList.toggle("hidden",show);
   if(show){
-    const meterType=categoryEl.value;
-    const filtered=(b?.meters||[]).filter(m=>m.type===meterType);
     meters.innerHTML=filtered.map(m=>`<div class="meter-row"><label>${m.name}<small class="operation-sub">${m.type} • رقم الحساب: ${m.account||"-"}</small></label><label>رقم العداد<input value="${m.number||""}" disabled></label><label>المبلغ<input class="meterAmount" data-meter-id="${m.id}" type="number" min="0" step=".01" placeholder="0.00"></label></div>`).join("")||`<p class='muted'>لا توجد عدادات ${meterType} لهذه العمارة. أضف عدادًا من صفحة العمارات.</p>`;
   }
 }
