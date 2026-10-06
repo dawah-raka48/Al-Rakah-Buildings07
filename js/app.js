@@ -1,4 +1,4 @@
-const DB={buildings:"sr_buildings",transactions:"sr_transactions"};
+const DB={buildings:"sr_buildings",transactions:"sr_transactions",expenseCategories:"sr_expense_categories"};
 let deferredInstallPrompt=null;
 const SESSION_KEY="srakah_session_token";
 function get(k){try{return JSON.parse(localStorage.getItem(k)||"[]")}catch{return[]}}
@@ -13,7 +13,14 @@ function toggleNav(){
   document.body.classList.toggle("nav-collapsed",!nav.classList.contains("open"));
 }
 function fillBuildings(sel,all=false){const e=document.querySelector(sel);if(!e)return;const b=get(DB.buildings);e.innerHTML=(all?'<option value="">كل العمارات</option>':'<option value="">اختر العمارة</option>')+b.map(x=>`<option value="${x.id}">${x.name}</option>`).join("")}
-function cats(t){return t==="income"?["إيجار","محل","موقف","إيراد آخر"]:["كهرباء","مياه","صيانة","نظافة","حراسة","مصروف آخر"]}
+const DEFAULT_EXPENSE_CATEGORIES=[
+{id:"exp_ac_maint",name:"صيانة مكيف",active:true},{id:"exp_ac_buy",name:"شراء مكيف",active:true},
+{id:"exp_bath_maint",name:"صيانة حمام",active:true},{id:"exp_plumbing_buy",name:"شراء أدوات سباكة",active:true},
+{id:"exp_electric",name:"كهرباء",active:true},{id:"exp_water",name:"مياه",active:true},
+{id:"exp_clean",name:"نظافة",active:true},{id:"exp_guard",name:"حراسة",active:true},{id:"exp_other",name:"مصروف آخر",active:true}];
+function ensureExpenseCategories(){const current=get(DB.expenseCategories);if(!current.length)save(DB.expenseCategories,DEFAULT_EXPENSE_CATEGORIES);return get(DB.expenseCategories)}
+function cats(t){if(t==="income")return ["إيجار","محل","موقف","إيراد آخر"];return ensureExpenseCategories().filter(x=>x.active!==false).map(x=>x.name)}
+function expenseCategories(){return ensureExpenseCategories()}
 function buildingName(i){return get(DB.buildings).find(b=>b.id===i)?.name||"-"}
 
 let __busyCount=0;
