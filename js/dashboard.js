@@ -1,19 +1,44 @@
-
 let dashboardData={buildings:[],transactions:[]};
 
 (async function(){
   const d=await loadData();
   dashboardData=d;
-  dashboardMonth.value=new Date().toISOString().slice(0,7);
+  setCurrentYearPeriod();
   renderDashboard();
 })();
+
+function setCurrentYearPeriod(){
+  const now=new Date();
+  const y=now.getFullYear();
+  dashboardFrom.value=`${y}-01`;
+  dashboardTo.value=`${y}-${String(now.getMonth()+1).padStart(2,"0")}`;
+}
+function periodBounds(){
+  let from=dashboardFrom.value||"";
+  let to=dashboardTo.value||"";
+  if(from&&to&&from>to)[from,to]=[to,from];
+  return {from,to};
+}
+function inPeriod(date,from,to){
+  const mk=monthKey(date);
+  return (!from||mk>=from)&&(!to||mk<=to);
+}
+function periodText(from,to){
+  if(!from&&!to)return "كل العمليات";
+  if(from&&to&&from===to)return `شهر ${from}`;
+  return `من ${from||"البداية"} إلى ${to||"الآن"}`;
+}
 
 function renderDashboard(){
   const bs=dashboardData.buildings||[];
   const ts=dashboardData.transactions||[];
-  const mk=dashboardMonth.value;
+  let {from,to}=periodBounds();
 
-  const mt=ts.filter(x=>monthKey(x.date)===mk);
+  if(dashboardFrom.value&&dashboardTo.value&&dashboardFrom.value>dashboardTo.value){
+    dashboardFrom.value=from;dashboardTo.value=to;
+  }
+
+  const mt=ts.filter(x=>inPeriod(x.date,from,to));
   const inc=mt.filter(x=>x.type==="income").reduce((a,x)=>a+Number(x.amount||0),0);
   const exp=mt.filter(x=>x.type==="expense").reduce((a,x)=>a+Number(x.amount||0),0);
 
@@ -22,8 +47,12 @@ function renderDashboard(){
   monthExpense.textContent=money(exp);
   monthNet.textContent=money(inc-exp);
 
-  const label = mk ? `ملخص شهر ${mk}` : "ملخص الفترة";
-  const cards = bs.map(b=>{
+  const label=periodText(from,to);
+  document.getElementById("incomePeriodLabel").textContent=label;
+  document.getElementById("expensePeriodLabel").textContent=label;
+  document.getElementById("netPeriodLabel").textContent=label;
+
+  const cards=bs.map(b=>{
     const bt=mt.filter(x=>x.buildingId===b.id);
     const bi=bt.filter(x=>x.type==="income").reduce((a,x)=>a+Number(x.amount||0),0);
     const be=bt.filter(x=>x.type==="expense").reduce((a,x)=>a+Number(x.amount||0),0);
@@ -41,4 +70,6 @@ function renderDashboard(){
   buildingCards.innerHTML=cards||"<p class='muted'>لا توجد عمارات بعد. أضف أول عمارة للبدء.</p>";
 }
 
-dashboardMonth.onchange=renderDashboard;
+dashboardFrom?.addEventListener("change",renderDashboard);
+dashboardTo?.addEventListener("change",renderDashboard);
+dashboardReset?.addEventListener("click",()=>{setCurrentYearPeriod();renderDashboard()});
