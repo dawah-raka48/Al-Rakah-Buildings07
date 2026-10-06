@@ -8,4 +8,4 @@ passForm.onsubmit=async e=>{
   passForm.reset();passMsg.textContent="تم تغيير الرقم السري لجميع الأجهزة بنجاح.";passMsg.style.color="#087f5b";
  }catch(err){passMsg.textContent=err.message;passMsg.style.color="#b42318"}
 }
-function logout(){sessionStorage.removeItem("srakah_session_token");location.href="login.html"}
+
