@@ -36,6 +36,7 @@ function showNotice(message,type="success"){
   clearTimeout(window.__noticeTimer);
   window.__noticeTimer=setTimeout(()=>box.classList.remove("show"),3200);
 }
+window.alert=function(message){showNotice(String(message),/تعذر|خطأ|غير صحيح|أدخل|لا توجد/.test(String(message))?"error":"success");};
 function confirmAction(message,confirmText="نعم، متابعة"){
   return new Promise(resolve=>{
     let box=document.getElementById("appConfirm");
