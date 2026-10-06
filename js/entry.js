@@ -9,7 +9,7 @@ function refreshMeters(){
   }
 }
 typeEl.onchange=refresh;buildingEl.onchange=refreshMeters;categoryEl.onchange=refreshMeters;
-entryForm.onsubmit=async e=>{e.preventDefault();const saveBtn=entryForm.querySelector("button[type=\"submit\"]");const originalSaveText=saveBtn?.textContent||"حفظ العملية";if(saveBtn){saveBtn.disabled=true;saveBtn.textContent="جاري الحفظ…";}const meterType=typeEl.value==="expense"&&["كهرباء","مياه"].includes(categoryEl.value),b=get(DB.buildings).find(x=>x.id===buildingEl.value);if(!b)return showNotice("اختر العمارة أولاً.","error");try{if(meterType){
+entryForm.onsubmit=async e=>{e.preventDefault();const saveBtn=entryForm.querySelector("button[type=\"submit\"]");const originalSaveText=saveBtn?.textContent||"حفظ العملية";if(saveBtn){saveBtn.disabled=true;saveBtn.textContent="جاري الحفظ…";}const b=get(DB.buildings).find(x=>x.id===buildingEl.value),meterType=typeEl.value==="expense"&&["كهرباء","مياه"].includes(categoryEl.value)&&((b?.meters||[]).some(m=>m.type===categoryEl.value));if(!b)return showNotice("اختر العمارة أولاً.","error");try{if(meterType){
       let saved=0;
       const meterTypeName=categoryEl.value;
       const filtered=(b.meters||[]).filter(m=>m.type===meterTypeName);
