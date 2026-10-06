@@ -46,3 +46,73 @@
 
 /* مؤشر الماوس أثناء تنفيذ أي عملية */
 body.is-busy,body.is-busy *{cursor:not-allowed !important}
+
+/* ===== الثيم الجديد: إدارة عقارات جمعية الراكة ===== */
+:root{
+  --navy:#0f3557;--blue:#168aad;--cyan:#18a6c8;--ink:#172b3a;--muted:#6f8091;
+  --bg:#f3f7fa;--card:#fff;--line:#e1e9ef;--green:#159a75;--red:#d64545;--gold:#c58b2a;
+  --shadow:0 12px 34px rgba(15,53,87,.07);
+}
+body{background:linear-gradient(180deg,#f4f8fb 0%,#f7f9fb 100%);color:var(--ink)}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.28;background:radial-gradient(circle at 20% 10%,#d9f1f7 0,transparent 28%),radial-gradient(circle at 90% 20%,#e4edf5 0,transparent 25%);z-index:-1}
+.hero{background:#fff;color:var(--ink);height:78px;border-bottom:1px solid var(--line);position:relative;z-index:20}
+.hero-inner{height:78px;max-width:none;margin:0;padding:0 28px 0 315px}
+.brand-mark{flex-direction:row-reverse;color:var(--navy)}
+.brand-mark b{font-size:18px}.brand-mark small{color:var(--muted);opacity:1}
+.brand-icon{background:#eaf4f8;border:1px solid #d3e5ee;color:var(--navy);border-radius:14px}
+.mobile-menu{display:block;background:#eef6fa;border:1px solid #d8e8ef;color:var(--navy)}
+.nav{
+  position:fixed;top:0;right:0;bottom:0;width:285px;z-index:50;
+  margin:0;padding:24px 18px;display:flex;flex-direction:column;gap:6px;
+  background:linear-gradient(180deg,#0b304f 0%,#123f63 62%,#0a2944 100%);box-shadow:-8px 0 30px rgba(10,38,62,.12);
+}
+.nav:before{content:"إدارة عقارات جمعية الراكة";display:block;color:#fff;font-size:18px;font-weight:800;padding:4px 12px 25px}
+.nav:after{content:"";display:block;margin-top:auto;height:120px;border-radius:20px;background:linear-gradient(145deg,transparent,#ffffff08)}
+.nav a,.nav .logout-link{width:100%;text-align:right;color:#dbe8f1;padding:13px 15px;border-radius:12px;font-size:14px;font-weight:700;border:0;background:transparent}
+.nav a:before{display:inline-block;width:27px;font-size:17px;opacity:.9}
+.nav a[href="index.html"]:before{content:"⌂"}.nav a[href="buildings.html"]:before{content:"▦"}.nav a[href="entry.html"]:before{content:"＋"}.nav a[href="reports.html"]:before{content:"▥"}.nav a[href="settings.html"]:before{content:"⚙"}
+.nav a.active,.nav a:hover{background:linear-gradient(90deg,#0fa6c7,#1599ba);color:#fff;box-shadow:0 8px 20px rgba(9,166,198,.16)}
+.nav .logout-link{margin-top:20px;border:1px solid #7f9bb0;color:#fff}
+.nav .logout-link:hover{background:#ffffff12}
+.container{max-width:none;margin:0;padding:30px 55px 55px 335px}
+.welcome,.page-title{margin:0 0 22px}.welcome h1,.page-title h1{font-size:30px;color:var(--navy)}
+.welcome p,.page-title p{font-size:13px}
+.quick-action,.primary-btn{background:var(--navy);border-radius:12px;box-shadow:0 8px 20px rgba(15,53,87,.12)}
+.quick-action:hover,.primary-btn:hover{background:#164d78}
+.dashboard-filter{border-radius:20px;padding:18px 22px}
+.stats{gap:16px;margin-bottom:20px}
+.stat-card{min-height:105px;border-radius:17px;padding:18px 20px;box-shadow:var(--shadow)}
+.stat-card strong{font-size:26px;color:var(--navy)}
+.stat-icon{width:46px;height:46px;border-radius:14px}
+.stat-icon.green{background:#e6f7f1;color:var(--green)}.stat-icon.red{background:#fff0f0;color:var(--red)}.stat-icon.gold{background:#fff6df;color:var(--gold)}
+.panel{border-radius:20px;box-shadow:var(--shadow);border-color:#e3ebf1}
+.building-grid{gap:16px}
+.building-item{border-radius:17px;padding:17px;background:#fff;box-shadow:0 7px 22px rgba(15,53,87,.045)}
+.building-item:hover{transform:translateY(-3px);box-shadow:0 14px 30px rgba(15,53,87,.09)}
+.building-item h3{color:var(--navy);font-size:17px}
+.building-meta{margin-top:9px;padding-top:9px}
+.building-meta b{color:var(--navy)}
+.mini-btn{border-radius:10px;background:#edf5f9}
+.system-bar{display:none}
+.app-notice{top:22px}
+.app-confirm{z-index:10050}
+body.is-busy,body.is-busy *{cursor:not-allowed!important}
+@media(max-width:1000px){
+  .hero-inner{padding:0 22px}
+  .container{padding:25px 25px 45px}
+  .nav{width:245px}
+}
+@media(max-width:760px){
+  .hero{height:70px}.hero-inner{height:70px;padding:0 14px}
+  .brand-mark b{font-size:14px}.brand-mark small{font-size:9px}
+  .mobile-menu{display:block;order:-1}
+  .nav{right:auto;left:0;transform:translateX(100%);width:min(285px,88vw);transition:.22s;box-shadow:8px 0 30px rgba(10,38,62,.18)}
+  .nav.open{display:flex;transform:translateX(0)}
+  .container{padding:20px 14px 35px}
+  .welcome h1,.page-title h1{font-size:24px}
+  .stats{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:450px){
+  .stats{grid-template-columns:1fr}
+  .stat-card{min-height:88px}
+}
