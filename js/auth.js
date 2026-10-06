@@ -1,27 +1,46 @@
-const AUTH_SESSION_KEY="srakah_session_token";
-function getAuthToken(){return localStorage.getItem(AUTH_SESSION_KEY)||sessionStorage.getItem(AUTH_SESSION_KEY)||""}
-function setAuthToken(token){localStorage.setItem(AUTH_SESSION_KEY,token);sessionStorage.setItem(AUTH_SESSION_KEY,token)}
-function isLogged(){return !!getAuthToken()}
-function togglePassword(){const x=document.getElementById("password");x.type=x.type==="password"?"text":"password"}
-if(location.pathname.endsWith("login.html")&&isLogged())location.href="index.html";
-if(!location.pathname.endsWith("login.html")&&!isLogged())location.href="login.html";
+async function getSession(){
+  if(!supabaseClient)return null;
+  const {data}=await supabaseClient.auth.getSession();
+  return data?.session||null;
+}
+function isLogged(){return !!window.__supabaseSession}
+function togglePassword(){
+  const x=document.getElementById("password");
+  if(x)x.type=x.type==="password"?"text":"password";
+}
+
+(async function(){
+  const session=await getSession();
+  window.__supabaseSession=session;
+  const isLoginPage=location.pathname.endsWith("login.html");
+  if(isLoginPage&&session){location.href="index.html";return}
+  if(!isLoginPage&&!session){location.href="login.html";return}
+})();
 
 document.getElementById("loginForm")?.addEventListener("submit",async e=>{
   e.preventDefault();
-  loginError.textContent="";
-  const p=password.value.trim();
-  if(!p){loginError.textContent="أدخل الرقم السري.";return}
+  const err=document.getElementById("loginError");
+  err.textContent="";
+  const email=document.getElementById("email")?.value.trim();
+  const p=document.getElementById("password")?.value||"";
+  if(!email){err.textContent="أدخل البريد الإلكتروني.";return}
+  if(!p){err.textContent="أدخل كلمة المرور.";return}
   try{
-    const r=await fetch(CONFIG.API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"login",data:{password:p}})});
-    const j=await r.json();
-    if(!j.success){loginError.textContent=j.message||"الرقم السري غير صحيح.";return}
-    setAuthToken(j.token);
+    const {data,error}=await supabaseClient.auth.signInWithPassword({email,password:p});
+    if(error)throw error;
+    window.__supabaseSession=data.session;
     location.href="index.html";
-  }catch(err){loginError.textContent="تعذر الاتصال بالنظام. تأكد من نشر Apps Script."}
+  }catch(error){
+    err.textContent=error.message||"البريد الإلكتروني أو كلمة المرور غير صحيحة.";
+  }
 });
 
-
-function logout(){
-  if(typeof confirmAction==="function")return confirmAction("هل تريد تسجيل الخروج من المنصة؟","نعم، تسجيل الخروج").then(ok=>{if(ok){localStorage.removeItem(AUTH_SESSION_KEY);sessionStorage.removeItem(AUTH_SESSION_KEY);location.href="login.html";}});
-  sessionStorage.removeItem(AUTH_SESSION_KEY);location.href="login.html";
+async function logout(){
+  const ok=typeof confirmAction==="function"
+    ? await confirmAction("هل تريد تسجيل الخروج من المنصة؟","نعم، تسجيل الخروج")
+    : true;
+  if(!ok)return;
+  await supabaseClient?.auth.signOut();
+  window.__supabaseSession=null;
+  location.href="login.html";
 }
