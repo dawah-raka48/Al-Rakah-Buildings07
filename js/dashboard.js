@@ -27,12 +27,14 @@ function renderDashboard(){
     const bt=mt.filter(x=>x.buildingId===b.id);
     const bi=bt.filter(x=>x.type==="income").reduce((a,x)=>a+Number(x.amount||0),0);
     const be=bt.filter(x=>x.type==="expense").reduce((a,x)=>a+Number(x.amount||0),0);
-    return `<article class="building-item">
-      <div class="building-top"><div><h3>${b.name}</h3><p>${b.address||"بدون عنوان"}</p></div><span class="eyebrow">${(b.meters||[]).length} عداد</span></div>
-      <div class="building-meta"><span>إيرادات ${label}</span><b>${money(bi)} ريال</b></div>
-      <div class="building-meta"><span>مصروفات ${label}</span><b>${money(be)} ريال</b></div>
-      <div class="building-meta"><span>الصافي</span><b>${money(bi-be)} ريال</b></div>
-      <div class="building-actions"><a class="mini-btn" href="entry.html?building=${b.id}">إدخال</a><a class="mini-btn" href="reports.html?building=${b.id}">التقرير</a></div>
+    return `<article class="building-item property-card">
+      <div class="property-top"><div><span class="property-badge">${(b.meters||[]).length} عداد</span><h3>${b.name}</h3><p>⌖ ${b.address||"بدون عنوان"}</p></div><span class="property-icon">▦</span></div>
+      <div class="property-values">
+        <div class="property-value income"><b>${money(bi)}</b><span>الإيرادات</span></div>
+        <div class="property-value expense"><b>${money(be)}</b><span>المصروفات</span></div>
+        <div class="property-value net"><b>${money(bi-be)}</b><span>الصافي</span></div>
+      </div>
+      <div class="building-actions"><a class="mini-btn primary-mini" href="reports.html?building=${b.id}">عرض التفاصيل ←</a></div>
     </article>`;
   }).join("");
 
