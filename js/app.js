@@ -6,7 +6,12 @@ function save(k,v){localStorage.setItem(k,JSON.stringify(v))}
 function id(){return Date.now().toString(36)+Math.random().toString(36).slice(2,8)}
 function money(n){return new Intl.NumberFormat("ar-SA",{maximumFractionDigits:2}).format(Number(n)||0)}
 function monthKey(d){return String(d||"").slice(0,7)}
-function toggleNav(){document.getElementById("nav")?.classList.toggle("open")}
+function toggleNav(){
+  const nav=document.getElementById("nav");
+  if(!nav)return;
+  nav.classList.toggle("open");
+  document.body.classList.toggle("nav-collapsed",!nav.classList.contains("open"));
+}
 function fillBuildings(sel,all=false){const e=document.querySelector(sel);if(!e)return;const b=get(DB.buildings);e.innerHTML=(all?'<option value="">كل العمارات</option>':'<option value="">اختر العمارة</option>')+b.map(x=>`<option value="${x.id}">${x.name}</option>`).join("")}
 function cats(t){return t==="income"?["إيجار","محل","موقف","إيراد آخر"]:["كهرباء","مياه","صيانة","نظافة","حراسة","مصروف آخر"]}
 function buildingName(i){return get(DB.buildings).find(b=>b.id===i)?.name||"-"}
