@@ -56,7 +56,7 @@ body.is-busy,body.is-busy *{cursor:not-allowed !important}
 body{background:linear-gradient(180deg,#f4f8fb 0%,#f7f9fb 100%);color:var(--ink)}
 body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.28;background:radial-gradient(circle at 20% 10%,#d9f1f7 0,transparent 28%),radial-gradient(circle at 90% 20%,#e4edf5 0,transparent 25%);z-index:-1}
 .hero{background:#fff;color:var(--ink);height:78px;border-bottom:1px solid var(--line);position:relative;z-index:20}
-.hero-inner{height:78px;max-width:none;margin:0;padding:0 28px 0 315px}
+.hero-inner{height:78px;max-width:none;margin:0;padding:0 315px 0 28px}
 .brand-mark{flex-direction:row-reverse;color:var(--navy)}
 .brand-mark b{font-size:18px}.brand-mark small{color:var(--muted);opacity:1}
 .brand-icon{background:#eaf4f8;border:1px solid #d3e5ee;color:var(--navy);border-radius:14px}
@@ -74,7 +74,7 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.28;ba
 .nav a.active,.nav a:hover{background:linear-gradient(90deg,#0fa6c7,#1599ba);color:#fff;box-shadow:0 8px 20px rgba(9,166,198,.16)}
 .nav .logout-link{margin-top:20px;border:1px solid #7f9bb0;color:#fff}
 .nav .logout-link:hover{background:#ffffff12}
-.container{max-width:none;margin:0;padding:30px 55px 55px 335px}
+.container{max-width:none;margin:0;padding:30px 335px 55px 55px}
 .welcome,.page-title{margin:0 0 22px}.welcome h1,.page-title h1{font-size:30px;color:var(--navy)}
 .welcome p,.page-title p{font-size:13px}
 .quick-action,.primary-btn{background:var(--navy);border-radius:12px;box-shadow:0 8px 20px rgba(15,53,87,.12)}
@@ -98,8 +98,8 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.28;ba
 .app-confirm{z-index:10050}
 body.is-busy,body.is-busy *{cursor:not-allowed!important}
 @media(max-width:1000px){
-  .hero-inner{padding:0 22px}
-  .container{padding:25px 25px 45px}
+  .hero-inner{padding:0 275px 0 22px}
+  .container{padding:25px 275px 45px 25px}
   .nav{width:245px}
 }
 @media(max-width:760px){
