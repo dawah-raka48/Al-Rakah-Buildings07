@@ -147,7 +147,7 @@ body.is-busy,body.is-busy *{cursor:not-allowed!important}
 .primary-mini{display:block;width:100%;text-align:center;background:#edf5fa;color:var(--navy)}
 .buildings-panel .building-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
 @media(max-width:760px){
- .top-live{display:none}
+ .top-live{display:flex;left:50%;font-size:9px}.top-live strong{font-size:12px}
  .dashboard-hero{min-height:145px;padding:22px}
  .dashboard-hero h1{font-size:23px}
  .dashboard-hero-icon{width:52px;height:52px;font-size:25px}
