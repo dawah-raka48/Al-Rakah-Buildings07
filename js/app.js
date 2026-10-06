@@ -84,7 +84,7 @@ function setupSystemBar(){
   const tick=()=>{
     const now=new Date();
     const d=now.toLocaleDateString("ar-SA-u-nu-latn",{year:"numeric",month:"2-digit",day:"2-digit"});
-    const t=now.toLocaleTimeString("ar-SA-u-nu-latn",{hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false});
+    const t=now.toLocaleTimeString("ar-SA-u-nu-latn",{hour:"numeric",minute:"2-digit",second:"2-digit",hour12:true});
     const de=document.getElementById("liveDate"),te=document.getElementById("liveTime");
     if(de)de.textContent=d;
     if(te)te.textContent=t;
