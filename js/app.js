@@ -85,4 +85,7 @@ function setupSystemBar(){
   };
   tick();setInterval(tick,1000);
 }
-document.addEventListener("DOMContentLoaded",setupSystemBar);
+function registerApp(){
+  if("serviceWorker" in navigator) navigator.serviceWorker.register("./service-worker.js").catch(()=>{});
+}
+document.addEventListener("DOMContentLoaded",()=>{setupSystemBar();registerApp()});
