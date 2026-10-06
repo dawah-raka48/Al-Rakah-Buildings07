@@ -24,3 +24,55 @@ async function syncFromGoogle(){
   save(DB.buildings,bs);save(DB.transactions,ts);return {buildings:bs,transactions:ts};
 }
 async function loadData(){try{return await syncFromGoogle()}catch(e){console.warn(e);return {buildings:get(DB.buildings),transactions:get(DB.transactions),offline:true}}}
+
+
+/* واجهة التنبيهات والوقت */
+function showNotice(message,type="success"){
+  let box=document.getElementById("appNotice");
+  if(!box){box=document.createElement("div");box.id="appNotice";box.className="app-notice";document.body.appendChild(box);}
+  box.className="app-notice "+type;
+  box.textContent=message;
+  requestAnimationFrame(()=>box.classList.add("show"));
+  clearTimeout(window.__noticeTimer);
+  window.__noticeTimer=setTimeout(()=>box.classList.remove("show"),3200);
+}
+function confirmAction(message,confirmText="نعم، متابعة"){
+  return new Promise(resolve=>{
+    let box=document.getElementById("appConfirm");
+    if(!box){
+      box=document.createElement("div");box.id="appConfirm";box.className="app-confirm";
+      box.innerHTML='<div class="app-confirm-box"><div class="app-confirm-icon">!</div><h3 id="confirmTitle">تأكيد</h3><p id="confirmMessage"></p><div class="app-confirm-actions"><button id="confirmCancel" class="ghost-btn">إلغاء</button><button id="confirmOk" class="primary-btn"></button></div></div>';
+      document.body.appendChild(box);
+    }
+    box.querySelector("#confirmMessage").textContent=message;
+    box.querySelector("#confirmOk").textContent=confirmText;
+    box.classList.add("show");
+    const done=v=>{box.classList.remove("show");resolve(v)};
+    box.querySelector("#confirmCancel").onclick=()=>done(false);
+    box.querySelector("#confirmOk").onclick=()=>done(true);
+  });
+}
+function setupSystemBar(){
+  if(location.pathname.endsWith("login.html")||document.getElementById("systemBar"))return;
+  const header=document.querySelector("header");
+  if(header){
+    const bar=document.createElement("div");bar.id="systemBar";bar.className="system-bar no-print";
+    bar.innerHTML='<span id="liveDate">--/--/----</span><span class="bar-sep">•</span><strong id="liveTime">--:--:--</strong>';
+    header.insertAdjacentElement("afterend",bar);
+  }
+  const nav=document.getElementById("nav");
+  if(nav&&!nav.querySelector(".logout-link")){
+    const b=document.createElement("button");b.type="button";b.className="logout-link";b.textContent="تسجيل الخروج";b.onclick=()=>window.logout?.();
+    nav.appendChild(b);
+  }
+  const tick=()=>{
+    const now=new Date();
+    const d=now.toLocaleDateString("ar-SA-u-nu-latn",{year:"numeric",month:"2-digit",day:"2-digit"});
+    const t=now.toLocaleTimeString("ar-SA-u-nu-latn",{hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false});
+    const de=document.getElementById("liveDate"),te=document.getElementById("liveTime");
+    if(de)de.textContent=d;
+    if(te)te.textContent=t;
+  };
+  tick();setInterval(tick,1000);
+}
+document.addEventListener("DOMContentLoaded",setupSystemBar);
