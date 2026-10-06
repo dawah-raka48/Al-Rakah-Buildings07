@@ -1,4 +1,5 @@
 const DB={buildings:"sr_buildings",transactions:"sr_transactions"};
+let deferredInstallPrompt=null;
 const SESSION_KEY="srakah_session_token";
 function get(k){try{return JSON.parse(localStorage.getItem(k)||"[]")}catch{return[]}}
 function save(k,v){localStorage.setItem(k,JSON.stringify(v))}
@@ -85,7 +86,50 @@ function setupSystemBar(){
   };
   tick();setInterval(tick,1000);
 }
+
+function isStandaloneApp(){
+  return window.matchMedia?.("(display-mode: standalone)").matches || window.navigator.standalone===true;
+}
+function isIOS(){
+  return /iphone|ipad|ipod/i.test(navigator.userAgent);
+}
+function isMobileAndroid(){
+  return /android/i.test(navigator.userAgent);
+}
+function setupInstallPrompt(){
+  if(location.pathname.endsWith("login.html")||isStandaloneApp())return;
+  window.addEventListener("beforeinstallprompt",e=>{
+    e.preventDefault();
+    deferredInstallPrompt=e;
+    renderInstallPrompt("install");
+  });
+  window.addEventListener("appinstalled",()=>{
+    deferredInstallPrompt=null;
+    document.getElementById("installPrompt")?.remove();
+    showNotice("تم تثبيت تطبيق عقارات الراكة بنجاح","success");
+  });
+  if(isIOS())setTimeout(()=>renderInstallPrompt("ios"),1800);
+}
+function renderInstallPrompt(mode){
+  if(document.getElementById("installPrompt"))return;
+  const box=document.createElement("div");
+  box.id="installPrompt";box.className="install-prompt";
+  const ios=mode==="ios";
+  box.innerHTML=ios
+    ? '<div class="install-prompt-icon">📱</div><div class="install-prompt-body"><strong>ثبّت عقارات الراكة على الآيفون</strong><span>اضغط مشاركة ⬆️ ثم «إضافة إلى الشاشة الرئيسية»</span></div><button class="install-prompt-close" aria-label="إغلاق">×</button>'
+    : '<div class="install-prompt-icon">📲</div><div class="install-prompt-body"><strong>ثبّت تطبيق عقارات الراكة</strong><span>ثبّت المنصة على جهازك للوصول إليها مثل أي تطبيق.</span></div><button class="install-prompt-action">تثبيت</button><button class="install-prompt-close" aria-label="إغلاق">×</button>';
+  document.body.appendChild(box);
+  box.querySelector(".install-prompt-close").onclick=()=>box.remove();
+  box.querySelector(".install-prompt-action")?.addEventListener("click",async()=>{
+    if(!deferredInstallPrompt){showNotice("استخدم قائمة المتصفح واختر «تثبيت التطبيق»","info");return}
+    deferredInstallPrompt.prompt();
+    await deferredInstallPrompt.userChoice;
+    deferredInstallPrompt=null;
+    box.remove();
+  });
+}
+
 function registerApp(){
   if("serviceWorker" in navigator) navigator.serviceWorker.register("./service-worker.js").catch(()=>{});
 }
-document.addEventListener("DOMContentLoaded",()=>{setupSystemBar();registerApp()});
+document.addEventListener("DOMContentLoaded",()=>{setupSystemBar();registerApp();setupInstallPrompt()});
