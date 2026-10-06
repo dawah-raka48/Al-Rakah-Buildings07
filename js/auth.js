@@ -17,3 +17,9 @@ document.getElementById("loginForm")?.addEventListener("submit",async e=>{
     location.href="index.html";
   }catch(err){loginError.textContent="تعذر الاتصال بالنظام. تأكد من نشر Apps Script."}
 });
+
+
+function logout(){
+  if(typeof confirmAction==="function")return confirmAction("هل تريد تسجيل الخروج من المنصة؟","نعم، تسجيل الخروج").then(ok=>{if(ok){sessionStorage.removeItem(AUTH_SESSION_KEY);location.href="login.html";}});
+  sessionStorage.removeItem(AUTH_SESSION_KEY);location.href="login.html";
+}
