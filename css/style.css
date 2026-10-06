@@ -245,3 +245,7 @@ body.login-body .login-btn{width:100%!important}
 .expense-category-actions{display:flex;gap:7px;flex-wrap:wrap}
 .expense-editor-box{max-width:460px}
 @media(max-width:600px){.expense-category-row{align-items:flex-start;flex-direction:column}.expense-category-actions{width:100%}.expense-category-actions .mini-btn{flex:1}}
+
+.period-filter-grid{grid-template-columns:1fr 1fr auto;align-items:end}
+.period-reset{height:46px;white-space:nowrap}
+@media(max-width:600px){.period-filter-grid{grid-template-columns:1fr 1fr}.period-reset{grid-column:1/-1;width:100%}}
