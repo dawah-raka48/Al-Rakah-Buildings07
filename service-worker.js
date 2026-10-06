@@ -1,4 +1,4 @@
-const CACHE="rakah-realestate-v1";
+const CACHE="rakah-realestate-v2";
 const ASSETS=[
   "./",
   "./index.html",
