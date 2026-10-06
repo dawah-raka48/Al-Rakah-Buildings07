@@ -220,3 +220,17 @@ body.login-body .login-btn{width:100%!important}
  body.login-body .login-card h1{font-size:23px!important;margin-top:20px!important}
  body.login-body .login-card>p{font-size:11px!important}
 }
+
+/* ===== ضبط هيدر الجوال النهائي ===== */
+@media(max-width:760px){
+  .hero-inner{position:relative;width:100%;padding:0 14px!important}
+  .brand-mark{position:absolute;right:14px;top:0;height:70px;max-width:47%;min-width:0;gap:7px;overflow:hidden;flex-direction:row-reverse}
+  .brand-mark .brand-icon{display:none}
+  .brand-mark>div{min-width:0;overflow:hidden}
+  .brand-mark b{display:block;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13px!important}
+  .brand-mark small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:8px!important}
+  .top-live{position:absolute!important;left:50%!important;right:auto!important;top:50%!important;transform:translate(-50%,-50%)!important;width:auto;max-width:27%;align-items:center!important;text-align:center!important;white-space:nowrap;z-index:25}
+  .top-live strong{font-size:13px!important;line-height:1.15}
+  .top-live span{font-size:8px!important;line-height:1.1}
+  .mobile-menu{position:absolute!important;left:14px!important;right:auto!important;top:15px!important;z-index:60}
+}
