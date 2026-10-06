@@ -47,10 +47,9 @@ function renderDashboard(){
   monthExpense.textContent=money(exp);
   monthNet.textContent=money(inc-exp);
 
-  const label=periodText(from,to);
-  document.getElementById("incomePeriodLabel").textContent=label;
-  document.getElementById("expensePeriodLabel").textContent=label;
-  document.getElementById("netPeriodLabel").textContent=label;
+  document.getElementById("incomePeriodLabel").textContent="الإيرادات";
+  document.getElementById("expensePeriodLabel").textContent="المصروفات";
+  document.getElementById("netPeriodLabel").textContent="صافي الفترة";
 
   const cards=bs.map(b=>{
     const bt=mt.filter(x=>x.buildingId===b.id);
