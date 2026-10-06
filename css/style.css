@@ -43,3 +43,6 @@
 .app-confirm-actions{display:flex;gap:9px;justify-content:center;margin-top:20px}
 .app-confirm-actions button{min-width:120px}
 @media(max-width:600px){.logout-link{width:100%;text-align:right;margin-top:4px}.app-notice{top:12px}.system-bar{font-size:11px}}
+
+/* مؤشر الماوس أثناء تنفيذ أي عملية */
+body.is-busy,body.is-busy *{cursor:not-allowed !important}
