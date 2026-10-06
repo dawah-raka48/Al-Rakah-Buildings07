@@ -31,10 +31,105 @@ function stopBusy(){__busyCount=Math.max(0,__busyCount-1);if(__busyCount===0)doc
 async function api(action,data={}){
   startBusy();
   try{
-    const r=await fetch(CONFIG.API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action,data,token:authToken()})});
-    const j=await r.json(); if(!j.success){if(j.code==="AUTH_REQUIRED"){localStorage.removeItem(SESSION_KEY);sessionStorage.removeItem(SESSION_KEY);location.href="login.html";}throw new Error(j.message||"خطأ في الخادم")} return j;
+    if(!supabaseClient) throw new Error("تعذر تشغيل اتصال Supabase");
+    const fail=(error)=>{throw new Error(error?.message||"تعذر تنفيذ العملية")};
+
+    if(action==="addBuilding"){
+      const {data:row,error}=await supabaseClient.from("buildings").insert({name:data.name,address:data.address||""}).select().single();
+      if(error)fail(error);
+      return {success:true,data:row};
+    }
+    if(action==="deleteBuilding"){
+      const {error}=await supabaseClient.from("buildings").delete().eq("id",data.id);
+      if(error)fail(error);
+      return {success:true};
+    }
+    if(action==="addMeter"){
+      const {data:row,error}=await supabaseClient.from("meters").insert({
+        building_id:data.buildingId,name:data.name,number:data.number||"",account:data.account||"",type:data.type
+      }).select().single();
+      if(error)fail(error);
+      return {success:true,data:row};
+    }
+    if(action==="addTransaction"){
+      const {data:row,error}=await supabaseClient.from("transactions").insert({
+        building_id:data.buildingId,date:data.date,type:data.type,category:data.category,
+        amount:Number(data.amount||0),note:data.note||"",meter_id:data.meterId||null,
+        meter_name:data.meterName||"",meter_number:data.meterNumber||"",meter_account:data.meterAccount||""
+      }).select().single();
+      if(error)fail(error);
+      return {success:true,data:row};
+    }
+    if(action==="deleteTransaction"){
+      const {error}=await supabaseClient.from("transactions").delete().eq("id",data.id);
+      if(error)fail(error);
+      return {success:true};
+    }
+    if(action==="updateTransaction"){
+      const {data:row,error}=await supabaseClient.from("transactions").update({
+        building_id:data.buildingId,date:data.date,type:data.type,category:data.category,
+        amount:Number(data.amount||0),note:data.note||"",meter_id:data.meterId||null,
+        meter_name:data.meterName||"",meter_number:data.meterNumber||"",meter_account:data.meterAccount||""
+      }).eq("id",data.id).select().single();
+      if(error)fail(error);
+      return {success:true,data:row};
+    }
+    if(action==="saveExpenseCategories"){
+      const rows=(data.rows||[]).map(x=>({id:String(x.id),name:String(x.name),active:x.active!==false}));
+      const {data:result,error}=await supabaseClient.from("expense_categories").upsert(rows,{onConflict:"id"}).select();
+      if(error)fail(error);
+      return {success:true,data:result};
+    }
+    if(action==="deleteExpenseCategory"){
+      const {error}=await supabaseClient.from("expense_categories").delete().eq("id",data.id);
+      if(error)fail(error);
+      return {success:true};
+    }
+    throw new Error("عملية غير معروفة");
   }finally{stopBusy()}
 }
+
+function normalizeSupabaseData(buildings,meters,transactions,categories){
+  const bs=(buildings||[]).map(x=>({id:String(x.id),name:String(x.name||""),address:String(x.address||""),meters:[]}));
+  (meters||[]).forEach(x=>{
+    const b=bs.find(b=>b.id===String(x.building_id));
+    if(b)b.meters.push({id:String(x.id),buildingId:b.id,name:String(x.name||""),number:String(x.number||""),account:String(x.account||""),type:String(x.type||"")});
+  });
+  const ts=(transactions||[]).map(x=>({
+    id:String(x.id),buildingId:String(x.building_id||""),date:apiDate(x.date),type:String(x.type||""),
+    category:String(x.category||""),amount:Number(x.amount||0),note:String(x.note||""),
+    meterId:String(x.meter_id||""),meterName:String(x.meter_name||""),meterNumber:String(x.meter_number||""),
+    meterAccount:String(x.meter_account||"")
+  }));
+  const cs=(categories||[]).map(x=>({id:String(x.id),name:String(x.name||""),active:x.active!==false}));
+  return {buildings:bs,transactions:ts,expenseCategories:cs};
+}
+
+async function syncFromGoogle(){
+  startBusy();
+  try{
+    if(!supabaseClient)throw new Error("اتصال Supabase غير متاح");
+    const [b,m,t,c]=await Promise.all([
+      supabaseClient.from("buildings").select("*").order("created_at",{ascending:true}),
+      supabaseClient.from("meters").select("*").order("created_at",{ascending:true}),
+      supabaseClient.from("transactions").select("*").order("date",{ascending:false}),
+      supabaseClient.from("expense_categories").select("*").order("name",{ascending:true})
+    ]);
+    if(b.error)throw b.error;if(m.error)throw m.error;if(t.error)throw t.error;if(c.error)throw c.error;
+    const d=normalizeSupabaseData(b.data,m.data,t.data,c.data);
+    save(DB.buildings,d.buildings);save(DB.transactions,d.transactions);save(DB.expenseCategories,d.expenseCategories);
+    return d;
+  }finally{stopBusy()}
+}
+
+async function loadData(){
+  try{return await syncFromGoogle()}
+  catch(e){console.warn(e);return {
+    buildings:get(DB.buildings),transactions:get(DB.transactions),
+    expenseCategories:ensureExpenseCategories(),offline:true
+  }}
+}
+
 function apiDate(v){if(!v)return "";if(typeof v==="string"&&/^\d{4}-\d{2}-\d{2}/.test(v))return v.slice(0,10);const d=new Date(v);return isNaN(d)?String(v).slice(0,10):d.toISOString().slice(0,10)}
 async function syncFromGoogle(){
   startBusy();
