@@ -1,11 +1,19 @@
 passForm.onsubmit=async e=>{
  e.preventDefault();
- if(newPass.value.length<4||newPass.value!==confirmPass.value){passMsg.textContent="تأكد من الرقم السري الجديد والتأكيد.";passMsg.style.color="#b42318";return}
+ if(newPass.value.length<8||newPass.value!==confirmPass.value){
+   passMsg.textContent="كلمة المرور الجديدة يجب أن تكون 8 أحرف على الأقل ومتطابقة مع التأكيد.";
+   passMsg.style.color="#b42318";return
+ }
  try{
-  const r=await fetch(CONFIG.API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"changePassword",token:sessionStorage.getItem("srakah_session_token")||"",data:{oldPassword:oldPass.value,newPassword:newPass.value}})});
-  const j=await r.json();
-  if(!j.success)throw new Error(j.message||"تعذر تغيير الرقم السري");
-  passForm.reset();passMsg.textContent="تم تغيير الرقم السري لجميع الأجهزة بنجاح.";passMsg.style.color="#087f5b";
+   const {data:{user}}=await supabaseClient.auth.getUser();
+   if(!user?.email)throw new Error("تعذر معرفة حساب المستخدم الحالي");
+   const {error:verifyError}=await supabaseClient.auth.signInWithPassword({email:user.email,password:oldPass.value});
+   if(verifyError)throw new Error("كلمة المرور الحالية غير صحيحة");
+   const {error}=await supabaseClient.auth.updateUser({password:newPass.value});
+   if(error)throw error;
+   passForm.reset();
+   passMsg.textContent="تم تغيير كلمة المرور بنجاح.";
+   passMsg.style.color="#087f5b";
  }catch(err){passMsg.textContent=err.message;passMsg.style.color="#b42318"}
 }
 
@@ -26,18 +34,18 @@ function openExpenseEditor(cid=""){
  expenseEditor.classList.remove("hidden");setTimeout(()=>expenseName.focus(),50);
 }
 function closeExpenseEditor(){expenseEditor.classList.add("hidden");editingExpenseId=null}
-function saveExpenseEditor(){
+async function saveExpenseEditor(){
  const clean=expenseName.value.trim();if(!clean){showNotice("اكتب اسم الصنف","error");return}
  const rows=expenseCategories();
  if(rows.some(x=>x.id!==editingExpenseId&&x.name===clean)){showNotice("هذا الصنف موجود بالفعل","error");return}
  if(editingExpenseId){const row=rows.find(x=>x.id===editingExpenseId);if(row)row.name=clean;showNotice("تم تعديل الصنف")}
  else{rows.push({id:"exp_"+id(),name:clean,active:true});showNotice("تمت إضافة الصنف")}
- save(DB.expenseCategories,rows);renderExpenseCategories();closeExpenseEditor();
+ try{await api("saveExpenseCategories",{rows});save(DB.expenseCategories,rows);renderExpenseCategories();closeExpenseEditor()}catch(err){showNotice("تعذر حفظ أصناف المصروفات: "+err.message,"error")};
 }
-function toggleExpenseCategory(cid){
+async function toggleExpenseCategory(cid){
  const rows=expenseCategories();const row=rows.find(x=>x.id===cid);if(!row)return;
  row.active=row.active===false;
- save(DB.expenseCategories,rows);renderExpenseCategories();
+ try{await api("saveExpenseCategories",{rows});save(DB.expenseCategories,rows);renderExpenseCategories()}catch(err){showNotice("تعذر تحديث الصنف: "+err.message,"error");return}
  showNotice(row.active?"تم تفعيل الصنف":"تم تعطيل الصنف");
 }
-document.addEventListener("DOMContentLoaded",renderExpenseCategories);
+document.addEventListener("DOMContentLoaded",async()=>{await loadData();renderExpenseCategories()});
