@@ -234,3 +234,14 @@ body.login-body .login-btn{width:100%!important}
   .top-live span{font-size:8px!important;line-height:1.1}
   .mobile-menu{position:absolute!important;left:14px!important;right:auto!important;top:15px!important;z-index:60}
 }
+
+.expense-categories-list{display:grid;gap:10px}
+.expense-category-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:13px 15px;border:1px solid var(--line);border-radius:14px;background:#fbfdfe}
+.expense-category-row.inactive{opacity:.58}
+.expense-category-name{display:flex;align-items:center;gap:10px;font-weight:800;color:var(--navy)}
+.expense-category-name small{font-size:10px;color:var(--muted);font-weight:600}
+.category-dot{width:9px;height:9px;border-radius:50%;background:#168aad;flex:0 0 9px}
+.inactive .category-dot{background:#9aa7b2}
+.expense-category-actions{display:flex;gap:7px;flex-wrap:wrap}
+.expense-editor-box{max-width:460px}
+@media(max-width:600px){.expense-category-row{align-items:flex-start;flex-direction:column}.expense-category-actions{width:100%}.expense-category-actions .mini-btn{flex:1}}
