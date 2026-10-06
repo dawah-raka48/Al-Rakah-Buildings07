@@ -106,7 +106,7 @@ body.is-busy,body.is-busy *{cursor:not-allowed!important}
   .hero{height:70px}.hero-inner{height:70px;padding:0 14px}
   .brand-mark b{font-size:14px}.brand-mark small{font-size:9px}
   .mobile-menu{display:block;order:-1}
-  .nav{right:auto;left:0;transform:translateX(100%);width:min(285px,88vw);transition:.22s;box-shadow:8px 0 30px rgba(10,38,62,.18)}
+  .nav{right:0;left:auto;transform:translateX(100%);width:min(285px,88vw);transition:.22s;box-shadow:-8px 0 30px rgba(10,38,62,.18)}
   .nav.open{display:flex;transform:translateX(0)}
   .container{padding:20px 14px 35px}
   .welcome h1,.page-title h1{font-size:24px}
