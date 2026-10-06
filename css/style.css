@@ -186,3 +186,19 @@ body.nav-collapsed .mobile-menu{background:#0f3557;color:#fff}
   body.nav-collapsed .container{padding-right:14px}
   body.nav-collapsed .hero-inner{padding-right:14px}
 }
+
+/* ===== إصلاح عرض شاشة تسجيل الدخول على iPhone / Android ===== */
+html,body{width:100%;max-width:100%;overflow-x:hidden}
+.login-body{width:100%;min-width:0;overflow-x:hidden;padding:0 15px}
+.login-card{width:100%;max-width:420px;min-width:0;margin:0 auto}
+.password-wrap{width:100%;min-width:0}
+.password-wrap input{width:100%;min-width:0}
+.login-btn{width:100%;max-width:100%}
+@media(max-width:500px){
+  .login-body{padding:0 15px}
+  .login-card{width:100%;max-width:none;padding:24px 20px;border-radius:20px}
+  .login-card h1{font-size:23px}
+  .login-card>p{font-size:11px}
+  .login-logo{font-size:16px}
+  .login-logo span{width:38px;height:38px}
+}
