@@ -25,3 +25,21 @@
     -webkit-overflow-scrolling:touch;
   }
 }
+
+
+/* شريط النظام والتنبيهات */
+.system-bar{display:flex;justify-content:center;align-items:center;gap:10px;padding:7px 16px;background:#f4f7fa;border-bottom:1px solid var(--line);color:var(--muted);font-size:12px;font-weight:700}
+.system-bar strong{color:var(--navy);font-size:14px;direction:ltr}
+.logout-link{border:0;background:transparent;color:#b42318;font:inherit;font-weight:800;cursor:pointer;padding:8px 12px;margin-inline-start:auto}
+.app-notice{position:fixed;top:18px;left:50%;transform:translate(-50%,-20px);opacity:0;z-index:9999;min-width:280px;max-width:calc(100vw - 30px);padding:13px 18px;border-radius:13px;background:#087f5b;color:#fff;box-shadow:0 12px 30px rgba(0,0,0,.16);font-weight:800;text-align:center;transition:.22s}
+.app-notice.show{opacity:1;transform:translate(-50%,0)}
+.app-notice.error{background:#b42318}.app-notice.info{background:var(--navy)}
+.app-confirm{position:fixed;inset:0;background:rgba(10,25,40,.48);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:18px;z-index:10000;opacity:0;visibility:hidden;transition:.18s}
+.app-confirm.show{opacity:1;visibility:visible}
+.app-confirm-box{width:min(420px,100%);background:#fff;border-radius:20px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.22);text-align:center}
+.app-confirm-icon{width:44px;height:44px;margin:0 auto 10px;border-radius:50%;display:grid;place-items:center;background:#fff3cd;color:#946200;font-size:24px;font-weight:900}
+.app-confirm-box h3{margin:0 0 7px;color:var(--navy);font-size:20px}
+.app-confirm-box p{margin:0;color:var(--muted);line-height:1.8}
+.app-confirm-actions{display:flex;gap:9px;justify-content:center;margin-top:20px}
+.app-confirm-actions button{min-width:120px}
+@media(max-width:600px){.logout-link{width:100%;text-align:right;margin-top:4px}.app-notice{top:12px}.system-bar{font-size:11px}}
