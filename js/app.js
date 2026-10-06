@@ -65,7 +65,7 @@ function confirmAction(message,confirmText="نعم، متابعة"){
 function setupSystemBar(){
   if(location.pathname.endsWith("login.html")||document.getElementById("systemBar"))return;
   const header=document.querySelector("header");
-  if(header){
+  if(header&&!document.getElementById("liveDate")){
     const bar=document.createElement("div");bar.id="systemBar";bar.className="system-bar no-print";
     bar.innerHTML='<span id="liveDate">--/--/----</span><span class="bar-sep">•</span><strong id="liveTime">--:--:--</strong>';
     header.insertAdjacentElement("afterend",bar);
