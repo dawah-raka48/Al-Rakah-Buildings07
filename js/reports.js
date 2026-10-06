@@ -33,7 +33,7 @@ function displayDate(v){
 function getCategories(){
   const type=operationType.value;
   const incomeCats=["إيجار","محل","موقف","إيراد آخر"];
-  const expenseCats=["كهرباء","مياه","صيانة","نظافة","حراسة","مصروف آخر"];
+  const expenseCats=cats("expense");
   return type==="income"
     ? incomeCats
     : type==="expense"
